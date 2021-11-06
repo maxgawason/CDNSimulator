@@ -12,6 +12,7 @@ public class Simulator {
     NetworkPipe sgVaPipe;
     CDNClient client;
     Long time = 0L;
+    String biggestObject;
     public static void main(String[] args) {
         System.out.println("Welcome to the CDN Simulator with delayed hits");
         Simulator sim = new Simulator("wiki2018-tiny.tr", "LRU");
@@ -30,6 +31,8 @@ public class Simulator {
     }
 
     public void init() {
+        //find biggest object
+        biggestObject = TracePreprocessor.findHighestObject(cdnDataFile);
         //create CDN Nodes
         deNode = new CDNNode();
         sgNode = new CDNNode();
@@ -42,9 +45,16 @@ public class Simulator {
         //create client
         client = new CDNClient(cdnDataFile);
 
-        //TODO:initialize objects
-        //for each object
-        //add to random num of nodes
+        Long numObjects = Long.parseLong(biggestObject);
+        for (Long object = 0L; object <= numObjects; object++) {
+            if (object % 3 == 0) {
+                deNode.insertObject(object.toString());
+            } else if (object % 3 == 1) {
+                vaNode.insertObject(object.toString());
+            } else if (object % 3 == 2) {
+                sgNode.insertObject(object.toString());
+            }
+        }
     }
 
     public void run() {

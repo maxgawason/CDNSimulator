@@ -21,7 +21,7 @@ public class CDNClient {
         while (scanner.hasNext(currentTime.toString())) {
             String fullRequestLine = scanner.nextLine();
             String[] splitRequestLine = fullRequestLine.split("\\s+");
-            currentRequests.add(splitRequestLine[1]); //TODO: look this up
+            currentRequests.add(splitRequestLine[1]);
         }
         return currentRequests;
     }

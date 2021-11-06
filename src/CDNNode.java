@@ -11,10 +11,15 @@ public class CDNNode {
     }
 
     public void receiveRequestData(List<String> requestedData) {
-        //TODO: check if something actually has the object
         for (String object : requestedData) {
-            objectsToBeSentOut.add(object);
+            if (currentObjects.contains(object)) {
+                objectsToBeSentOut.add(object);
+            }
         }
+    }
+
+    public void insertObject(String object) {
+        currentObjects.add(object);
     }
 
     public List<String> outgoingRequests() {

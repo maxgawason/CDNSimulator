@@ -3,16 +3,14 @@ import java.util.*;
 
 public class CDNAccessNode extends CDNNode {
     TreeMap<String, List<Long>> waitingRequests;
-    CachePolicy cachePolicy;
+    Cache cache;
     List<String> objectsToBeRequested;
     Long totalLatency = 0L;
     Long numPacketsProcessed = 0L;
     public CDNAccessNode(String cachePolicyType) {
         super();
         objectsToBeRequested = new ArrayList<String>();
-        if (cachePolicyType.equals("LRU")) {
-            cachePolicy = new LRU();
-        }
+        cache = new LRU(100L, "LRU");
         waitingRequests = new TreeMap<String, List<Long>>();
     }
 
@@ -22,8 +20,7 @@ public class CDNAccessNode extends CDNNode {
 
     public void receiveData(List<String> receivedData) {
         for (String object : receivedData) {
-            //TODO: evict an object
-            currentObjects.add(object);
+            cache.insertObject(object);
         }
     }
 
@@ -31,7 +28,7 @@ public class CDNAccessNode extends CDNNode {
         Set<String> keys = new TreeSet<String>(waitingRequests.keySet());
         for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
             String key = iterator.next();
-            if (currentObjects.contains(key)) {
+            if (currentObjects.contains(key) || cache.containsObject(key)) {
                 for (Long timestamp : waitingRequests.get(key)) {
                     totalLatency += time - timestamp;
                     numPacketsProcessed++;
@@ -43,7 +40,7 @@ public class CDNAccessNode extends CDNNode {
 
     public void processNewRequests(List<String> newRequests, Long time) {
         for (String object : newRequests) {
-            if (!this.currentObjects.contains(object)) {
+            if (!currentObjects.contains(object) && !cache.containsObject(object)) {
                 acceptRequest(object, time);
             }
         }
