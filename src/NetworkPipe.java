@@ -43,6 +43,7 @@ public class NetworkPipe {
 
     public void advanceData() {
         //TODO: make sure this is correct
+        outData = new ArrayList<Long>();
         Iterator<NetworkPacket> iterator = travelingPackets.iterator();
         while (iterator.hasNext()) {
             NetworkPacket packet = iterator.next();

@@ -15,9 +15,11 @@ public class CDNSimulator {
     Long time = 0L;
     String biggestObject;
     Long cacheSize;
+    Long startTime;
+    Long endTime;
     public static void main(String[] args) {
         System.out.println("Welcome to the CDN Simulator with delayed hits");
-        CDNSimulator sim = new CDNSimulator("wiki2018-tiny.tr", "LRU", 200L);
+        CDNSimulator sim = new CDNSimulator("wiki2018-med.tr", "LRU", 200L);
         sim.init();
         sim.run();
         sim.outputStatistics();
@@ -31,9 +33,12 @@ public class CDNSimulator {
 
     public void outputStatistics() {
         vaNode.printStatistics();
+        System.out.println("Runtime: " + (endTime - startTime)/1000000000 + " seconds");
     }
 
     public void init() {
+        //set start
+        startTime = System.nanoTime();
         //find biggest object
         biggestObject = TracePreprocessor.findHighestObject(cdnDataFile);
         //create CDN Nodes
@@ -71,10 +76,11 @@ public class CDNSimulator {
             time++;
             waitTime--;
         }
+        endTime = System.nanoTime();
     }
 
     public void stepWithoutNewData() {
-        System.out.println("stepping without new data: " + time);
+        System.out.println("Timestep: " + time);
         //Long t1 = System.nanoTime();
         processIncomingNetworkPipes();
         //Long t2 = System.nanoTime();
@@ -86,24 +92,24 @@ public class CDNSimulator {
     }
 
     public void processIncomingNetworkPipes() {
-        Long t1 = System.nanoTime();
+        //Long t1 = System.nanoTime();
         vaDePipe.advanceData();
         vaSgPipe.advanceData();
         sgVaPipe.advanceData();
         deVaPipe.advanceData();
-        Long t2 = System.nanoTime();
+        //Long t2 = System.nanoTime();
         List<Long> vaDeOutData = vaDePipe.getOutData();
         List<Long> vaSgOutData = vaSgPipe.getOutData();
         List<Long> sgVaOutData = sgVaPipe.getOutData();
         List<Long> deVaOutData = deVaPipe.getOutData();
-        Long t3 = System.nanoTime();
+        //Long t3 = System.nanoTime();
         vaNode.receiveData(sgVaOutData);
         vaNode.receiveData(deVaOutData);
-        Long t5 = System.nanoTime();
+        //Long t5 = System.nanoTime();
         sgNode.receiveRequestData(vaSgOutData);
         deNode.receiveRequestData(vaDeOutData);
-        Long t4 = System.nanoTime();
-        System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
+        //Long t4 = System.nanoTime();
+        //System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
     }
 
     public void processNewRequests() {
@@ -121,11 +127,17 @@ public class CDNSimulator {
         deVaPipe.addRequests(outgoingRequests, time);
     }
     public void stepWithNewData() {
-        System.out.println("stepping with new data");
+        System.out.println("Timestep: " + time);
+        Long t1 = System.nanoTime();
         processIncomingNetworkPipes();
+        Long t2 = System.nanoTime();
         vaNode.processOldRequests(time);
+        Long t3 = System.nanoTime();
         processNewRequests();
+        Long t4 = System.nanoTime();
         processOutgoingNetworkPipes();
+        Long t5 = System.nanoTime();
+        System.out.println("incoming: " + String.valueOf(t2 - t1).length() + " old requests: " + String.valueOf(t3 - t2).length() + " new requests: " + String.valueOf(t4 -t3).length() + " outgoing: " + String.valueOf(t5-t4).length());
     }
 
 }
