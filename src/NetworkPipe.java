@@ -23,12 +23,12 @@ public class NetworkPipe {
         for (Long object : newRequests) {
             newPackets.add(object);
         }
-        int location = ringLocation % avgLatencyMillis;
-        currentPackets[location] = newPackets;
+        currentPackets[ringLocation] = newPackets;
     }
 
     public void advanceData() {
         ringLocation++;
+        ringLocation = ringLocation % (avgLatencyMillis - 1);
     }
 
     public List<Long> getOutData() {
