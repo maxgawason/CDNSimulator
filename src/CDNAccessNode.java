@@ -4,12 +4,12 @@ import java.util.*;
 public class CDNAccessNode extends CDNNode {
     TreeMap<Long, List<Long>> waitingRequests;
     Cache cache;
-    List<Long> objectsToBeRequested;
+    LinkedList<Long> objectsToBeRequested;
     Long totalLatency = 0L;
     Long numPacketsProcessed = 0L;
     public CDNAccessNode(String cachePolicyType, Long cacheSize) {
         super();
-        objectsToBeRequested = new ArrayList<Long>();
+        objectsToBeRequested = new LinkedList<Long>();
         if (cachePolicyType.equals("LRU")) {
             cache = new LRU(cacheSize);
         } else {
@@ -18,11 +18,11 @@ public class CDNAccessNode extends CDNNode {
         waitingRequests = new TreeMap<Long, List<Long>>();
     }
 
-    public List<Long> outgoingRequests() {
+    public LinkedList<Long> outgoingRequests() {
         return objectsToBeRequested;
     }
 
-    public void receiveData(List<Long> receivedData) {
+    public void receiveData(LinkedList<Long> receivedData) {
         for (Long object : receivedData) {
             cache.insertObject(object);
         }
@@ -42,7 +42,7 @@ public class CDNAccessNode extends CDNNode {
         }
     }
 
-    public void processNewRequests(List<Long> newRequests, Long time) {
+    public void processNewRequests(LinkedList<Long> newRequests, Long time) {
         for (Long object : newRequests) {
             if (!currentObjects.contains(object) && !cache.containsObject(object)) {
                 acceptRequest(object, time);
