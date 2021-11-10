@@ -4,7 +4,7 @@ public abstract class Cache {
     Long numObjectsInCache;
     Long cacheSize;
 
-    public Cache(Long cacheSize, String cacheType) {
+    public Cache(Long cacheSize) {
         numObjectsInCache = 0L;
         this.cacheSize = cacheSize;
     }

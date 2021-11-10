@@ -13,17 +13,19 @@ public class Simulator {
     CDNClient client;
     Long time = 0L;
     String biggestObject;
+    Long cacheSize;
     public static void main(String[] args) {
         System.out.println("Welcome to the CDN Simulator with delayed hits");
-        Simulator sim = new Simulator("wiki2018-tiny.tr", "LRU");
+        Simulator sim = new Simulator("wiki2018-tiny.tr", "LRU", 200L);
         sim.init();
         sim.run();
         sim.outputStatistics();
     }
 
-    public Simulator(String cdnDataFile, String cachePolicyType) {
+    public Simulator(String cdnDataFile, String cachePolicyType, Long cacheSize) {
         this.cdnDataFile = cdnDataFile;
         this.cachePolicyType = cachePolicyType;
+        this.cacheSize = cacheSize;
     }
 
     public void outputStatistics() {
@@ -36,7 +38,7 @@ public class Simulator {
         //create CDN Nodes
         deNode = new CDNNode();
         sgNode = new CDNNode();
-        vaNode = new CDNAccessNode(cachePolicyType);
+        vaNode = new CDNAccessNode(cachePolicyType, cacheSize);
         //create pipes
         vaDePipe = new NetworkPipe(30);
         deVaPipe = new NetworkPipe(30);

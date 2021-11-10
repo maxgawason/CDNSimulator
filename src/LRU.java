@@ -29,8 +29,8 @@ public class LRU extends Cache {
     ListNode tail;
 
 
-    public LRU(Long cacheSize, String cacheType) {
-        super(cacheSize, cacheType);
+    public LRU(Long cacheSize) {
+        super(cacheSize);
     }
 
     public void addObject(String object) {
@@ -39,7 +39,7 @@ public class LRU extends Cache {
             tail = head;
         } else {
             ListNode newObject = new ListNode(object, head, null);
-            head.nextNode = newObject;
+            head.setNextNode(newObject);
             head = newObject;
         }
         cacheContents.put(object, head);

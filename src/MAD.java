@@ -1,6 +1,6 @@
 public class MAD extends Cache {
-    public MAD(Long cacheSize, String cacheType) {
-        super(cacheSize, cacheType);
+    public MAD(Long cacheSize) {
+        super(cacheSize);
     }
 
     public void addObject(String object) {

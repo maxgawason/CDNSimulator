@@ -7,10 +7,14 @@ public class CDNAccessNode extends CDNNode {
     List<String> objectsToBeRequested;
     Long totalLatency = 0L;
     Long numPacketsProcessed = 0L;
-    public CDNAccessNode(String cachePolicyType) {
+    public CDNAccessNode(String cachePolicyType, Long cacheSize) {
         super();
         objectsToBeRequested = new ArrayList<String>();
-        cache = new LRU(100L, "LRU");
+        if (cachePolicyType.equals("LRU")) {
+            cache = new LRU(cacheSize);
+        } else {
+            cache = new MAD(cacheSize);
+        }
         waitingRequests = new TreeMap<String, List<Long>>();
     }
 
