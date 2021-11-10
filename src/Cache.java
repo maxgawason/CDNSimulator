@@ -23,4 +23,8 @@ public abstract class Cache {
     abstract void evictObject();
 
     abstract boolean containsObject(Long object);
+
+    abstract void resetStatistics();
+
+    abstract void printStatistics();
 }

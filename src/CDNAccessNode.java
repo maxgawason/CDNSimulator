@@ -23,9 +23,11 @@ public class CDNAccessNode extends CDNNode {
     }
 
     public void receiveData(LinkedList<Long> receivedData) {
+        cache.resetStatistics();
         for (Long object : receivedData) {
             cache.insertObject(object);
         }
+        cache.printStatistics();
     }
 
     public void processOldRequests(Long time) {

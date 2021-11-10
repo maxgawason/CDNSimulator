@@ -15,4 +15,12 @@ public class MAD extends Cache {
         //TODO
         return true;
     }
+
+    public void printStatistics() {
+        //TODO
+    }
+
+    public void resetStatistics() {
+        //TODO
+    }
 }
