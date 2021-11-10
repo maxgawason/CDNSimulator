@@ -15,21 +15,21 @@ public class CDNSimulator {
     CDNClient client;
     Long time = 0L;
     String biggestObject;
-    Long cacheSize;
+    Double cacheSizeAsPercent;
     Long startTime;
     Long endTime;
     public static void main(String[] args) {
         System.out.println("Welcome to the CDN Simulator with delayed hits");
-        CDNSimulator sim = new CDNSimulator("wiki2018-med.tr", "LRU", 200L);
+        CDNSimulator sim = new CDNSimulator("wiki2018-med.tr", "LRU", 0.25);
         sim.init();
         sim.run();
         sim.outputStatistics();
     }
 
-    public CDNSimulator(String cdnDataFile, String cachePolicyType, Long cacheSize) {
+    public CDNSimulator(String cdnDataFile, String cachePolicyType, Double cacheSizeAsPercent) {
         this.cdnDataFile = cdnDataFile;
         this.cachePolicyType = cachePolicyType;
-        this.cacheSize = cacheSize;
+        this.cacheSizeAsPercent = cacheSizeAsPercent;
     }
 
     public void outputStatistics() {
@@ -45,7 +45,6 @@ public class CDNSimulator {
         //create CDN Nodes
         deNode = new CDNNode();
         sgNode = new CDNNode();
-        vaNode = new CDNAccessNode(cachePolicyType, cacheSize);
         //create pipes
         vaDePipe = new NetworkPipe(30);
         deVaPipe = new NetworkPipe(30);
@@ -53,8 +52,11 @@ public class CDNSimulator {
         sgVaPipe = new NetworkPipe(20);
         //create client
         client = new CDNClient(cdnDataFile);
-
+        //create CDN Access node
         Long numObjects = Long.parseLong(biggestObject);
+        Long cacheSize = (long) ((numObjects / 3) * cacheSizeAsPercent);
+        vaNode = new CDNAccessNode(cachePolicyType, cacheSize);
+        //distribute data
         for (Long object = 0L; object <= numObjects; object++) {
             if (object % 3 == 0) {
                 deNode.insertObject(object);
@@ -93,24 +95,24 @@ public class CDNSimulator {
     }
 
     public void processIncomingNetworkPipes() {
-        //Long t1 = System.nanoTime();
+        Long t1 = System.nanoTime();
         vaDePipe.advanceData();
         vaSgPipe.advanceData();
         sgVaPipe.advanceData();
         deVaPipe.advanceData();
-        //Long t2 = System.nanoTime();
+        Long t2 = System.nanoTime();
         LinkedList<Long> vaDeOutData = vaDePipe.getOutData();
         LinkedList<Long> vaSgOutData = vaSgPipe.getOutData();
         LinkedList<Long> sgVaOutData = sgVaPipe.getOutData();
         LinkedList<Long> deVaOutData = deVaPipe.getOutData();
-        //Long t3 = System.nanoTime();
+        Long t3 = System.nanoTime();
         vaNode.receiveData(sgVaOutData);
         vaNode.receiveData(deVaOutData);
-        //Long t5 = System.nanoTime();
+        Long t5 = System.nanoTime();
         sgNode.receiveRequestData(vaSgOutData);
         deNode.receiveRequestData(vaDeOutData);
-        //Long t4 = System.nanoTime();
-        //System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
+        Long t4 = System.nanoTime();
+        System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
     }
 
     public void processNewRequests() {
@@ -129,16 +131,16 @@ public class CDNSimulator {
     }
     public void stepWithNewData() {
         System.out.println("Timestep: " + time);
-        Long t1 = System.nanoTime();
+        //Long t1 = System.nanoTime();
         processIncomingNetworkPipes();
-        Long t2 = System.nanoTime();
+        //Long t2 = System.nanoTime();
         vaNode.processOldRequests(time);
-        Long t3 = System.nanoTime();
+        //Long t3 = System.nanoTime();
         processNewRequests();
-        Long t4 = System.nanoTime();
+        //Long t4 = System.nanoTime();
         processOutgoingNetworkPipes();
-        Long t5 = System.nanoTime();
-        System.out.println("incoming: " + String.valueOf(t2 - t1).length() + " old requests: " + String.valueOf(t3 - t2).length() + " new requests: " + String.valueOf(t4 -t3).length() + " outgoing: " + String.valueOf(t5-t4).length());
+        //Long t5 = System.nanoTime();
+        //System.out.println("incoming: " + String.valueOf(t2 - t1).length() + " old requests: " + String.valueOf(t3 - t2).length() + " new requests: " + String.valueOf(t4 -t3).length() + " outgoing: " + String.valueOf(t5-t4).length());
     }
 
 }
