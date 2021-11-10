@@ -18,20 +18,16 @@ public class NetworkPipe {
         return avgLatencyMillis;
     }
 
-    public void addRequests(List<Long> newRequests, Long time) {
-        LinkedList<Long> newPackets = new LinkedList<Long>();
-        for (Long object : newRequests) {
-            newPackets.add(object);
-        }
-        int location = ringLocation % avgLatencyMillis;
-        currentPackets[location] = newPackets;
+    public void addRequests(LinkedList<Long> newRequests) {
+        currentPackets[ringLocation] = newRequests;
     }
 
     public void advanceData() {
         ringLocation++;
+        ringLocation = ringLocation % (avgLatencyMillis - 1);
     }
 
-    public List<Long> getOutData() {
+    public LinkedList<Long> getOutData() {
         return currentPackets[ringLocation];
     }
 }

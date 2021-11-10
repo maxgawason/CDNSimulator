@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class CDNClient {
@@ -16,8 +15,8 @@ public class CDNClient {
         }
     }
 
-    public ArrayList<Long> getCurrentRequests(Long currentTime) {
-        ArrayList<Long> currentRequests = new ArrayList<Long>();
+    public LinkedList<Long> getCurrentRequests(Long currentTime) {
+        LinkedList<Long> currentRequests = new LinkedList<Long>();
         while (scanner.hasNext(currentTime.toString())) {
             String fullRequestLine = scanner.nextLine();
             String[] splitRequestLine = fullRequestLine.split("\\s+");

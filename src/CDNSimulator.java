@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 import java.lang.System;
 
@@ -98,10 +99,10 @@ public class CDNSimulator {
         sgVaPipe.advanceData();
         deVaPipe.advanceData();
         //Long t2 = System.nanoTime();
-        List<Long> vaDeOutData = vaDePipe.getOutData();
-        List<Long> vaSgOutData = vaSgPipe.getOutData();
-        List<Long> sgVaOutData = sgVaPipe.getOutData();
-        List<Long> deVaOutData = deVaPipe.getOutData();
+        LinkedList<Long> vaDeOutData = vaDePipe.getOutData();
+        LinkedList<Long> vaSgOutData = vaSgPipe.getOutData();
+        LinkedList<Long> sgVaOutData = sgVaPipe.getOutData();
+        LinkedList<Long> deVaOutData = deVaPipe.getOutData();
         //Long t3 = System.nanoTime();
         vaNode.receiveData(sgVaOutData);
         vaNode.receiveData(deVaOutData);
@@ -113,18 +114,18 @@ public class CDNSimulator {
     }
 
     public void processNewRequests() {
-        List<Long> newRequests = client.getCurrentRequests(time);
+        LinkedList<Long> newRequests = client.getCurrentRequests(time);
         vaNode.processNewRequests(newRequests, time);
     }
 
     public void processOutgoingNetworkPipes() {
-        List<Long> outgoingRequests = vaNode.outgoingRequests();
-        vaDePipe.addRequests(outgoingRequests, time);
-        vaSgPipe.addRequests(outgoingRequests, time);
+        LinkedList<Long> outgoingRequests = vaNode.outgoingRequests();
+        vaDePipe.addRequests(outgoingRequests);
+        vaSgPipe.addRequests(outgoingRequests);
         outgoingRequests = sgNode.outgoingRequests();
-        sgVaPipe.addRequests(outgoingRequests, time);
+        sgVaPipe.addRequests(outgoingRequests);
         outgoingRequests = deNode.outgoingRequests();
-        deVaPipe.addRequests(outgoingRequests, time);
+        deVaPipe.addRequests(outgoingRequests);
     }
     public void stepWithNewData() {
         System.out.println("Timestep: " + time);
