@@ -99,10 +99,11 @@ public class CDNSimulator {
         Long t3 = System.nanoTime();
         vaNode.receiveData(sgVaOutData);
         vaNode.receiveData(deVaOutData);
+        Long t5 = System.nanoTime();
         sgNode.receiveRequestData(vaSgOutData);
         deNode.receiveRequestData(vaDeOutData);
         Long t4 = System.nanoTime();
-        System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve: " + String.valueOf(t4-t3).length());
+        System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
     }
 
     public void processNewRequests() {

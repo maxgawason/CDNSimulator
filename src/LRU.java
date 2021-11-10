@@ -47,7 +47,9 @@ public class LRU extends Cache {
 
     public void evictObject() {
         cacheContents.remove(tail.getObject());
+        ListNode delete = tail;
         tail = tail.nextNode;
+        delete = null;
     }
 
     public boolean containsObject(Long object) {
