@@ -16,12 +16,12 @@ public class CDNClient {
         }
     }
 
-    public ArrayList<String> getCurrentRequests(Long currentTime) {
-        ArrayList<String> currentRequests = new ArrayList<String>();
+    public ArrayList<Long> getCurrentRequests(Long currentTime) {
+        ArrayList<Long> currentRequests = new ArrayList<Long>();
         while (scanner.hasNext(currentTime.toString())) {
             String fullRequestLine = scanner.nextLine();
             String[] splitRequestLine = fullRequestLine.split("\\s+");
-            currentRequests.add(splitRequestLine[1]);
+            currentRequests.add(Long.parseLong(splitRequestLine[1]));
         }
         return currentRequests;
     }

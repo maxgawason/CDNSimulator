@@ -9,7 +9,7 @@ public abstract class Cache {
         this.cacheSize = cacheSize;
     }
 
-    public void insertObject(String object) {
+    public void insertObject(Long object) {
         if (numObjectsInCache < cacheSize) {
             numObjectsInCache++;
         } else {
@@ -18,9 +18,9 @@ public abstract class Cache {
         addObject(object);
     }
 
-    abstract void addObject(String object);
+    abstract void addObject(Long object);
 
     abstract void evictObject();
 
-    abstract boolean containsObject(String object);
+    abstract boolean containsObject(Long object);
 }

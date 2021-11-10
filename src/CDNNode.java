@@ -3,26 +3,26 @@ import java.util.HashSet;
 import java.util.List;
 
 public class CDNNode {
-    HashSet<String> currentObjects;
-    List<String> objectsToBeSentOut;
+    HashSet<Long> currentObjects;
+    List<Long> objectsToBeSentOut;
     public CDNNode() {
-        currentObjects = new HashSet<String>();
-        objectsToBeSentOut = new ArrayList<String>();
+        currentObjects = new HashSet<Long>();
+        objectsToBeSentOut = new ArrayList<Long>();
     }
 
-    public void receiveRequestData(List<String> requestedData) {
-        for (String object : requestedData) {
+    public void receiveRequestData(List<Long> requestedData) {
+        for (Long object : requestedData) {
             if (currentObjects.contains(object)) {
                 objectsToBeSentOut.add(object);
             }
         }
     }
 
-    public void insertObject(String object) {
+    public void insertObject(Long object) {
         currentObjects.add(object);
     }
 
-    public List<String> outgoingRequests() {
+    public List<Long> outgoingRequests() {
         return objectsToBeSentOut;
     }
 

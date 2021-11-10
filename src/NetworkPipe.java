@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 class NetworkPacket {
-    public String object;
+    public Long object;
     public Long timeLeftInPipe;
-    public NetworkPacket(String object, Long timeLeftInPipe) {
+    public NetworkPacket(Long object, Long timeLeftInPipe) {
         this.object = object;
         this.timeLeftInPipe = timeLeftInPipe;
     }
@@ -22,11 +22,11 @@ class NetworkPacket {
 
 public class NetworkPipe {
     double avgLatencyMillis;
-    List<String> outData;
+    List<Long> outData;
     LinkedList<NetworkPacket> travelingPackets;
     public NetworkPipe(double avgLatencyMillis) {
         this.avgLatencyMillis = avgLatencyMillis;
-        outData = new ArrayList<String>();
+        outData = new ArrayList<Long>();
         travelingPackets = new LinkedList<NetworkPacket>();
 
     }
@@ -35,8 +35,8 @@ public class NetworkPipe {
         return avgLatencyMillis;
     }
 
-    public void addRequests(List<String> newRequests, Long time) {
-        for (String object : newRequests) {
+    public void addRequests(List<Long> newRequests, Long time) {
+        for (Long object : newRequests) {
             travelingPackets.add(new NetworkPacket(object, time));
         }
     }
@@ -54,7 +54,7 @@ public class NetworkPipe {
         }
     }
 
-    public List<String> getOutData() {
+    public List<Long> getOutData() {
         return outData;
     }
 }

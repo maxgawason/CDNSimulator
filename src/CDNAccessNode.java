@@ -2,36 +2,36 @@ import java.rmi.server.ExportException;
 import java.util.*;
 
 public class CDNAccessNode extends CDNNode {
-    TreeMap<String, List<Long>> waitingRequests;
+    TreeMap<Long, List<Long>> waitingRequests;
     Cache cache;
-    List<String> objectsToBeRequested;
+    List<Long> objectsToBeRequested;
     Long totalLatency = 0L;
     Long numPacketsProcessed = 0L;
     public CDNAccessNode(String cachePolicyType, Long cacheSize) {
         super();
-        objectsToBeRequested = new ArrayList<String>();
+        objectsToBeRequested = new ArrayList<Long>();
         if (cachePolicyType.equals("LRU")) {
             cache = new LRU(cacheSize);
         } else {
             cache = new MAD(cacheSize);
         }
-        waitingRequests = new TreeMap<String, List<Long>>();
+        waitingRequests = new TreeMap<Long, List<Long>>();
     }
 
-    public List<String> outgoingRequests() {
+    public List<Long> outgoingRequests() {
         return objectsToBeRequested;
     }
 
-    public void receiveData(List<String> receivedData) {
-        for (String object : receivedData) {
+    public void receiveData(List<Long> receivedData) {
+        for (Long object : receivedData) {
             cache.insertObject(object);
         }
     }
 
     public void processOldRequests(Long time) {
-        Set<String> keys = new TreeSet<String>(waitingRequests.keySet());
-        for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
-            String key = iterator.next();
+        Set<Long> keys = new TreeSet<Long>(waitingRequests.keySet());
+        for (Iterator<Long> iterator = keys.iterator(); iterator.hasNext();) {
+            Long key = iterator.next();
             if (currentObjects.contains(key) || cache.containsObject(key)) {
                 for (Long timestamp : waitingRequests.get(key)) {
                     totalLatency += time - timestamp;
@@ -42,15 +42,15 @@ public class CDNAccessNode extends CDNNode {
         }
     }
 
-    public void processNewRequests(List<String> newRequests, Long time) {
-        for (String object : newRequests) {
+    public void processNewRequests(List<Long> newRequests, Long time) {
+        for (Long object : newRequests) {
             if (!currentObjects.contains(object) && !cache.containsObject(object)) {
                 acceptRequest(object, time);
             }
         }
     }
 
-    public void acceptRequest(String object, Long time) {
+    public void acceptRequest(Long object, Long time) {
         if (waitingRequests.containsKey(object)) {
             waitingRequests.get(object).add(time);
             objectsToBeRequested.add(object);

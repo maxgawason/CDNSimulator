@@ -3,7 +3,7 @@ public class MAD extends Cache {
         super(cacheSize);
     }
 
-    public void addObject(String object) {
+    public void addObject(Long object) {
         //TODO
     }
 
@@ -11,7 +11,7 @@ public class MAD extends Cache {
         //TODO
     }
 
-    public boolean containsObject(String object) {
+    public boolean containsObject(Long object) {
         //TODO
         return true;
     }

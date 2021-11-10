@@ -51,11 +51,11 @@ public class CDNSimulator {
         Long numObjects = Long.parseLong(biggestObject);
         for (Long object = 0L; object <= numObjects; object++) {
             if (object % 3 == 0) {
-                deNode.insertObject(object.toString());
+                deNode.insertObject(object);
             } else if (object % 3 == 1) {
-                vaNode.insertObject(object.toString());
+                vaNode.insertObject(object);
             } else if (object % 3 == 2) {
-                sgNode.insertObject(object.toString());
+                sgNode.insertObject(object);
             }
         }
     }
@@ -92,10 +92,10 @@ public class CDNSimulator {
         sgVaPipe.advanceData();
         deVaPipe.advanceData();
         Long t2 = System.nanoTime();
-        List<String> vaDeOutData = vaDePipe.getOutData();
-        List<String> vaSgOutData = vaSgPipe.getOutData();
-        List<String> sgVaOutData = sgVaPipe.getOutData();
-        List<String> deVaOutData = deVaPipe.getOutData();
+        List<Long> vaDeOutData = vaDePipe.getOutData();
+        List<Long> vaSgOutData = vaSgPipe.getOutData();
+        List<Long> sgVaOutData = sgVaPipe.getOutData();
+        List<Long> deVaOutData = deVaPipe.getOutData();
         Long t3 = System.nanoTime();
         vaNode.receiveData(sgVaOutData);
         vaNode.receiveData(deVaOutData);
@@ -106,12 +106,12 @@ public class CDNSimulator {
     }
 
     public void processNewRequests() {
-        List<String> newRequests = client.getCurrentRequests(time);
+        List<Long> newRequests = client.getCurrentRequests(time);
         vaNode.processNewRequests(newRequests, time);
     }
 
     public void processOutgoingNetworkPipes() {
-        List<String> outgoingRequests = vaNode.outgoingRequests();
+        List<Long> outgoingRequests = vaNode.outgoingRequests();
         vaDePipe.addRequests(outgoingRequests, time);
         vaSgPipe.addRequests(outgoingRequests, time);
         outgoingRequests = sgNode.outgoingRequests();

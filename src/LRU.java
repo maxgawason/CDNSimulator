@@ -3,14 +3,14 @@ import java.util.HashMap;
 class ListNode {
     ListNode previousNode;
     ListNode nextNode;
-    String object;
-    public ListNode(String object, ListNode previousNode, ListNode nextNode) {
+    Long object;
+    public ListNode(Long object, ListNode previousNode, ListNode nextNode) {
         this.object = object;
         this.previousNode = previousNode;
         this.nextNode = nextNode;
     }
 
-    public String getObject() {
+    public Long getObject() {
         return object;
     }
 
@@ -24,7 +24,7 @@ class ListNode {
 }
 
 public class LRU extends Cache {
-    HashMap<String, ListNode> cacheContents = new HashMap<String, ListNode>();
+    HashMap<Long, ListNode> cacheContents = new HashMap<Long, ListNode>();
     ListNode head;
     ListNode tail;
 
@@ -33,7 +33,7 @@ public class LRU extends Cache {
         super(cacheSize);
     }
 
-    public void addObject(String object) {
+    public void addObject(Long object) {
         if (head == null) {
             head = new ListNode(object, null, null);
             tail = head;
@@ -50,7 +50,7 @@ public class LRU extends Cache {
         tail = tail.nextNode;
     }
 
-    public boolean containsObject(String object) {
+    public boolean containsObject(Long object) {
         return cacheContents.containsKey(object);
     }
 }
