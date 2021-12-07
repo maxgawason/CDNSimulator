@@ -20,7 +20,7 @@ public class CDNSimulator {
     Long endTime;
     public static void main(String[] args) {
         System.out.println("Welcome to the CDN Simulator with delayed hits");
-        CDNSimulator sim = new CDNSimulator("wiki2018-med.tr", "LRU", 0.25);
+        CDNSimulator sim = new CDNSimulator("wiki2018-tiny.tr", "MAD", 0.25);
         sim.init();
         sim.run();
         sim.outputStatistics();
@@ -46,10 +46,10 @@ public class CDNSimulator {
         deNode = new CDNNode();
         sgNode = new CDNNode();
         //create pipes
-        vaDePipe = new NetworkPipe(30);
-        deVaPipe = new NetworkPipe(30);
-        vaSgPipe = new NetworkPipe(20);
-        sgVaPipe = new NetworkPipe(20);
+        vaDePipe = new NetworkPipe(15);
+        deVaPipe = new NetworkPipe(15);
+        vaSgPipe = new NetworkPipe(10);
+        sgVaPipe = new NetworkPipe(10);
         //create client
         client = new CDNClient(cdnDataFile);
         //create CDN Access node
@@ -95,24 +95,24 @@ public class CDNSimulator {
     }
 
     public void processIncomingNetworkPipes() {
-        Long t1 = System.nanoTime();
+        //Long t1 = System.nanoTime();
         vaDePipe.advanceData();
         vaSgPipe.advanceData();
         sgVaPipe.advanceData();
         deVaPipe.advanceData();
-        Long t2 = System.nanoTime();
+        //Long t2 = System.nanoTime();
         LinkedList<Long> vaDeOutData = vaDePipe.getOutData();
         LinkedList<Long> vaSgOutData = vaSgPipe.getOutData();
         LinkedList<Long> sgVaOutData = sgVaPipe.getOutData();
         LinkedList<Long> deVaOutData = deVaPipe.getOutData();
-        Long t3 = System.nanoTime();
-        vaNode.receiveData(sgVaOutData);
-        vaNode.receiveData(deVaOutData);
-        Long t5 = System.nanoTime();
+        //Long t3 = System.nanoTime();
+        vaNode.receiveData(sgVaOutData, time);
+        vaNode.receiveData(deVaOutData, time);
+        //Long t5 = System.nanoTime();
         sgNode.receiveRequestData(vaSgOutData);
         deNode.receiveRequestData(vaDeOutData);
-        Long t4 = System.nanoTime();
-        System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
+        //Long t4 = System.nanoTime();
+        //System.out.println("advance: " + String.valueOf(t2 - t1).length() + " get out: " + String.valueOf(t3 - t2).length() + " recieve1: " + String.valueOf(t5 -t3).length() + " recieve2: " + String.valueOf(t4-t5).length());
     }
 
     public void processNewRequests() {

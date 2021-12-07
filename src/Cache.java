@@ -9,22 +9,18 @@ public abstract class Cache {
         this.cacheSize = cacheSize;
     }
 
-    public void insertObject(Long object) {
+    public void insertObject(Long object, Long time) {
         if (numObjectsInCache < cacheSize) {
             numObjectsInCache++;
         } else {
             evictObject();
         }
-        addObject(object);
+        addObject(object, time);
     }
 
-    abstract void addObject(Long object);
+    abstract void addObject(Long object, Long time);
 
     abstract void evictObject();
 
-    abstract boolean containsObject(Long object);
-
-    abstract void resetStatistics();
-
-    abstract void printStatistics();
+    abstract boolean containsObject(Long object, Long time);
 }

@@ -1,4 +1,3 @@
-import java.rmi.server.ExportException;
 import java.util.*;
 
 public class CDNAccessNode extends CDNNode {
@@ -7,6 +6,8 @@ public class CDNAccessNode extends CDNNode {
     LinkedList<Long> objectsToBeRequested;
     Long totalLatency = 0L;
     Long numPacketsProcessed = 0L;
+    Long cacheMisses = 0L;
+    Long numPacketsRecieved = 0L;
     public CDNAccessNode(String cachePolicyType, Long cacheSize) {
         super();
         objectsToBeRequested = new LinkedList<Long>();
@@ -22,19 +23,17 @@ public class CDNAccessNode extends CDNNode {
         return objectsToBeRequested;
     }
 
-    public void receiveData(LinkedList<Long> receivedData) {
-        cache.resetStatistics();
+    public void receiveData(LinkedList<Long> receivedData, Long time) {
         for (Long object : receivedData) {
-            cache.insertObject(object);
+            cache.insertObject(object, time);
         }
-        cache.printStatistics();
     }
 
     public void processOldRequests(Long time) {
         Set<Long> keys = new TreeSet<Long>(waitingRequests.keySet());
         for (Iterator<Long> iterator = keys.iterator(); iterator.hasNext();) {
             Long key = iterator.next();
-            if (currentObjects.contains(key) || cache.containsObject(key)) {
+            if (currentObjects.contains(key) || cache.containsObject(key, time)) {
                 for (Long timestamp : waitingRequests.get(key)) {
                     totalLatency += time - timestamp;
                     numPacketsProcessed++;
@@ -46,9 +45,11 @@ public class CDNAccessNode extends CDNNode {
 
     public void processNewRequests(LinkedList<Long> newRequests, Long time) {
         for (Long object : newRequests) {
-            if (!currentObjects.contains(object) && !cache.containsObject(object)) {
+            if (!currentObjects.contains(object) && !cache.containsObject(object, time)) {
                 acceptRequest(object, time);
+                cacheMisses++;
             }
+            numPacketsRecieved++;
         }
     }
 
@@ -70,5 +71,6 @@ public class CDNAccessNode extends CDNNode {
         System.out.println("Number of Packets Processed: " + numPacketsProcessed);
         System.out.println("Total Latency: " + totalLatency);
         System.out.println("Average Latency: " + (totalLatency / (double) numPacketsProcessed));
+        System.out.println("Cache miss ratio: " + (cacheMisses / (double) numPacketsRecieved));
     }
 }
